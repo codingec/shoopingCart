@@ -4,7 +4,7 @@ import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 import grails.plugin.springsecurity.annotation.Secured
 
-@Transactional(readOnly = true)
+
 class ClientsController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -22,87 +22,67 @@ class ClientsController {
         respond new Clients(params)
     }
 
-    @Transactional
+
     def save(Clients clients) {
         if (clients == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
-
         if (clients.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond clients.errors, view:'create'
             return
         }
 
-        clients.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'clients.label', default: 'Clients'), clients.id])
-                redirect clients
-            }
-            '*' { respond clients, [status: CREATED] }
+        if(!clients.save(flush:true)){
+            flash.message = message(code: 'default.created.message', args: [message(code: 'clients.label', default: 'Clients')])
+        }else {
+            flash.message = "this ${clients.id} has been created "+clients.name
         }
+        redirect view: "index"
     }
 
     def edit(Clients clients) {
         respond clients
     }
 
-    @Transactional
+
     def update(Clients clients) {
         if (clients == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
         if (clients.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond clients.errors, view:'edit'
             return
         }
 
-        clients.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'clients.label', default: 'Clients'), clients.id])
-                redirect clients
-            }
-            '*'{ respond clients, [status: OK] }
+        if(!clients.save(flush:true)){
+            flash.message = message(code: 'default.updated.message', args: [message(code: 'clients.label', default: 'Clients'), clients.id])
+        }else {
+            flash.message = "this ${clients.id} has been updated "+clients.name
         }
+        redirect view: "index"
     }
 
-    @Transactional
-    def delete(Clients clients) {
 
+    def delete(Clients clients) {
         if (clients == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
-        clients.delete flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'clients.label', default: 'Clients'), clients.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
+        if(clients.delete(flush:true)) {
+            flash.message = "No data "
+        }else {
+            flash.message = message(code: 'default.deleted.message', args: [message(code: 'clients.label', default: 'Clients'), clients.id])
         }
+        redirect view: "index"
     }
 
     protected void notFound() {
-        request.withFormat {
-            form multipartForm {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'clients.label', default: 'Clients'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
+                redirect action: "index"
+
     }
 }

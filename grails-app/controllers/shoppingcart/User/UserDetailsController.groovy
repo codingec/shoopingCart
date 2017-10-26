@@ -3,7 +3,7 @@ package shoppingcart.User
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 class UserDetailsController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -21,87 +21,71 @@ class UserDetailsController {
         respond new UserDetails(params)
     }
 
-    @Transactional
+
     def save(UserDetails userDetails) {
         if (userDetails == null) {
-            transactionStatus.setRollbackOnly()
+
             notFound()
             return
         }
 
         if (userDetails.hasErrors()) {
-            transactionStatus.setRollbackOnly()
+
             respond userDetails.errors, view:'create'
             return
         }
 
-        userDetails.save flush:true
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'userDetails.label', default: 'UserDetails'), userDetails.id])
-                redirect userDetails
-            }
-            '*' { respond userDetails, [status: CREATED] }
+        if(!userDetails.save(flush:true)){
+            flash.message = message(code: 'default.created.message', args: [message(code: 'userDetails.label', default: 'userDetails')])
+        }else {
+            flash.message = "this ${userDetails.id} has been created "+userDetails.firstName
         }
+        redirect view: "index"
+
     }
 
     def edit(UserDetails userDetails) {
         respond userDetails
     }
 
-    @Transactional
+
     def update(UserDetails userDetails) {
         if (userDetails == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
-
         if (userDetails.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond userDetails.errors, view:'edit'
             return
         }
 
-        userDetails.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'userDetails.label', default: 'UserDetails'), userDetails.id])
-                redirect userDetails
-            }
-            '*'{ respond userDetails, [status: OK] }
+        if(!userDetails.save(flush:true)){
+            flash.message = message(code: 'default.updated.message', args: [message(code: 'userDetails.label', default: 'userDetails'), userDetails.id])
+        }else {
+            flash.message = "this ${userDetails.id} has been updated "+userDetails.firstName
         }
+        redirect view: "index"
+
     }
 
-    @Transactional
-    def delete(UserDetails userDetails) {
 
+    def delete(UserDetails userDetails) {
         if (userDetails == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
 
-        userDetails.delete flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'userDetails.label', default: 'UserDetails'), userDetails.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
+        if(userDetails.delete(flush:true)) {
+            flash.message = "No data "
+        }else {
+            flash.message = message(code: 'default.deleted.message', args: [message(code: 'userDetails.label', default: 'userDetails'), userDetails.id])
         }
+        redirect view: "index"
     }
 
     protected void notFound() {
-        request.withFormat {
-            form multipartForm {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'userDetails.label', default: 'UserDetails'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
-    }
+                redirect action: "index"
+     }
 }

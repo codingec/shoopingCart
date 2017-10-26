@@ -3,7 +3,7 @@ package shoppingcart.Category
 import static org.springframework.http.HttpStatus.*
 import grails.transaction.Transactional
 
-@Transactional(readOnly = true)
+
 class CategoryController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
@@ -21,87 +21,63 @@ class CategoryController {
         respond new Category(params)
     }
 
-    @Transactional
+
     def save(Category category) {
         if (category == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
-
         if (category.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond category.errors, view:'create'
             return
         }
 
-        category.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'category.label', default: 'Category'), category.id])
-                redirect category
-            }
-            '*' { respond category, [status: CREATED] }
+        if(!category.save(flush:true)){
+            flash.message = message(code: 'default.created.message', args: [message(code: 'category.label', default: 'Category')])
+        }else {
+            flash.message = "this ${category.id} has been created "+category
         }
+        redirect view: "index"
     }
 
     def edit(Category category) {
         respond category
     }
 
-    @Transactional
+
     def update(Category category) {
         if (category == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
-
         if (category.hasErrors()) {
-            transactionStatus.setRollbackOnly()
             respond category.errors, view:'edit'
             return
         }
 
-        category.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'category.label', default: 'Category'), category.id])
-                redirect category
-            }
-            '*'{ respond category, [status: OK] }
+        if(!category.save(flush:true)){
+            flash.message = message(code: 'default.updated.message', args: [message(code: 'category.label', default: 'Category'), category.id])
+        }else {
+            flash.message = "this ${category.id} has been updated "+category
         }
+        redirect view: "index"
     }
 
-    @Transactional
     def delete(Category category) {
-
         if (category == null) {
-            transactionStatus.setRollbackOnly()
             notFound()
             return
         }
-
-        category.delete flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'category.label', default: 'Category'), category.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
+        if(category.delete(flush:true)) {
+            flash.message = "No data "
+        }else {
+            flash.message = message(code: 'default.deleted.message', args: [message(code: 'category.label', default: 'Category'), category.id])
         }
+        redirect view: "index"
     }
 
     protected void notFound() {
-        request.withFormat {
-            form multipartForm {
                 flash.message = message(code: 'default.not.found.message', args: [message(code: 'category.label', default: 'Category'), params.id])
                 redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
     }
 }
