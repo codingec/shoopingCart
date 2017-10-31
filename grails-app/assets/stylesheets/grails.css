@@ -31,9 +31,9 @@ pre {
     margin-bottom: 0px;
     padding-right: 110px;
 }
-.navbar .container {
-    margin: 10px;
-}
+/*.navbar .container {*/
+    /*margin: 10px;*/
+/*}*/
 .navbar-default a {
     color: #ffffff !important;
     font-size: 18px !important;
@@ -43,10 +43,10 @@ pre {
     width: 40px;
 
 }
-.navbar-default, .navbar-static-top {
-    background-color: #4D8618;
-    border: 0px;
-}
+/*.navbar-default, .navbar-static-top {*/
+    /*background-color: #4D8618;*/
+    /*border: 0px;*/
+/*}*/
 a.navbar-brand {
     color: white !important;
     font-size: 19px !important;
@@ -73,9 +73,9 @@ a.navbar-brand {
 }
 
 @media (min-width: 768px) {
-    .container {
-        width: auto;
-    }
+    /*.container {*/
+        /*width: auto;*/
+    /*}*/
 }
 
 /* specific to index.html */
@@ -118,11 +118,11 @@ a.navbar-brand {
 }
 
 .svg #band {
-    background-image: url(../img/grails-cupsonly-logo-white.svg);
-}
+    /*background-image: url(../img/grails-cupsonly-logo-white.svg);*/
+/*}*/
 
-.no-svg #band {
-    background-image: url(../img/groovy-logo-white.png);
+/*.no-svg #band {*/
+    /*background-image: url(../img/groovy-logo-white.png);*/
 }
 
 @media (max-width: 1010px) {

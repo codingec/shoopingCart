@@ -6,10 +6,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#myPage">Logo</a>
+            <a class="navbar-brand" id="mma" href="#myPage">
+                %{--<g:img dir="../images/background" file="home.png" />--}%
+                <asset:image src="background/home.png"  width="40" height="35" />
+            </a>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
+
             <ul class="nav navbar-nav navbar-right">
+
                 <li><a href="#about">ABOUT</a></li>
                 <li><a href="#services">SERVICES</a></li>
                 <li><a href="#portfolio">PORTFOLIO</a></li>
