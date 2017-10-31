@@ -55,7 +55,6 @@ class UserController {
             respond user.errors, view:'edit'
             return
         }
-
         if(!user.save(flush:true)){
                 flash.message = message(code: 'default.updated.message', args: [message(code: 'user.label', default: 'User'), user.id])
         }else {
